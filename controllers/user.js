@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const handleError = require('./error');
+const handleError = require('../errors/handle-error');
 
 const getUsers = (req, res) => {
   User
@@ -17,6 +17,7 @@ const changeUserInfo = (req, res) => {
       { name, about },
       {
         new: true,
+        runValidators: true,
       },
     )
     .orFail(new Error('err'))

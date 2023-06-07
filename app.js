@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const router = require('./routes/cards');
+const handleError = require('./errors/handle-error');
 
 const URL = 'mongodb://localhost:27017/mestodb';
 const app = express();
@@ -25,6 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('*', (err, req, res, next) => {
+  handleError(res, err);
+});
 app.use('/cards', require('./routes/cards'));
 app.use('/users', require('./routes/users'));
 

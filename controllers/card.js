@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const handleError = require('./error');
+const handleError = require('../errors/handle-error');
 
 const getCards = (req, res) => {
   Card
