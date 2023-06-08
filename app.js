@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const handleError = require('./errors/handle-error');
+const cardRouter = require('./routes/cards');
+const userRouter = require('./routes/users');
 
 const URL = 'mongodb://localhost:27017/mestodb';
 const app = express();
@@ -11,9 +12,14 @@ mongoose
   .connect(URL, {
     useNewUrlParser: true,
     family: 4,
-  })
-  .then(() => console.log("ok"))
-  .catch((err) => console.log(err));
+  });
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,11 +31,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('*', (err, req, res, next) => {
-  handleError(res, err);
+app.use('/cards', cardRouter);
+app.use('/users', userRouter);
+app.use((req, res) => {
+  res.status(404).send({
+    message: "Маршрут указан некорректно",
+  });
 });
-app.use('/cards', require('./routes/cards'));
-app.use('/users', require('./routes/users'));
 
 app.listen(PORT, (err) => {
   err ? console.log(err) : console.log(`Listening port ${PORT}`);

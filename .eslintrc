@@ -13,6 +13,9 @@
     "arrow-parens": "off",
     "no-multi-assign": "off",
     "no-undef": "off",
-    "no-else-return": "off"
+    "no-else-return": "off",
+    "consistent-return": "off",
+    "prefer-arrow-callback": "off",
+    "func-names": "off"
   }
 }
