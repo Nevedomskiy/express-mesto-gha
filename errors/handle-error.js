@@ -20,7 +20,7 @@ const handleError = (res, err) => {
     });
   } else {
     return res.status(500).send({
-      message: "Произошла неизвестная ошибка",
+      message: "На сервере произошла ошибка",
       err: err.name,
       stack: err.stack,
     });

@@ -30,6 +30,4 @@ router.post('/', createUser);
 router.patch('/me', changeUserInfo);
 router.patch('/me/avatar', changeUserAvatar);
 
-// router.use('*', errorHandler);
-
 module.exports = router;

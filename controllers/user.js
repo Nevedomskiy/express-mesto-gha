@@ -1,45 +1,21 @@
 const User = require('../models/user');
 const handleError = require('../errors/handle-error');
+const { changeData, getData, createData } = require('./helpers/helpers');
 
 const getUsers = (req, res) => {
-  User
-    .find({})
-    .then((users) => res.status(200).send(users))
-    .catch(err => handleError(res, err));
+  getData(User, req, res);
 };
 
 const changeUserInfo = (req, res) => {
-  const { name, about } = req.body;
   const me = req.user._id;
-  User
-    .findByIdAndUpdate(
-      me,
-      { name, about },
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
-    .orFail(new Error('err'))
-    .then((user) => res.status(200).send(user))
-    .catch(err => handleError(res, err));
+  const { name, about } = req.body;
+  changeData(User, { name, about }, me, req, res);
 };
 
 const changeUserAvatar = (req, res) => {
-  const { avatar } = req.body;
   const me = req.user._id;
-  User
-    .findByIdAndUpdate(
-      me,
-      { avatar },
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
-    .orFail(new Error('err'))
-    .then((user) => res.status(200).send(user))
-    .catch(err => handleError(res, err));
+  const { avatar } = req.body;
+  changeData(User, { avatar }, me, req, res);
 };
 
 const getUserById = (req, res) => {
@@ -52,10 +28,7 @@ const getUserById = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  User
-    .create({ name, about, avatar })
-    .then((newUser) => res.status(201).send(newUser))
-    .catch(err => handleError(res, err));
+  createData(User, { name, about, avatar }, req, res);
 };
 
 module.exports = {
