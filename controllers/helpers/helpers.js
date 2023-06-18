@@ -1,6 +1,6 @@
-const handleError = require('../../errors/handle-error');
+const handleError = require('../../errors/handle-errors');
 
-const changeData = (out, body, id, req, res) => {
+const changeData = (out, body, id, req, res, next) => {
   out
     .findByIdAndUpdate(
       id,
@@ -12,10 +12,11 @@ const changeData = (out, body, id, req, res) => {
     )
     .orFail(new Error('err'))
     .then((user) => res.status(200).send(user))
-    .catch(err => handleError(res, err));
+    .catch(err => handleError(err))
+    .catch(next);
 };
 
-const changeLike = (out, method, req, res) => {
+const changeLike = (out, method, req, res, next) => {
   out
     .findByIdAndUpdate(
       req.params.id,
@@ -24,21 +25,25 @@ const changeLike = (out, method, req, res) => {
     )
     .orFail(new Error('err'))
     .then((newCard) => res.status(200).send(newCard))
-    .catch(err => handleError(res, err));
+    .catch(err => handleError(err))
+    .catch(next);
 };
 
-const getData = (out, req, res) => {
+const getData = (out, req, res, next) => {
   out
     .find({})
+    .orFail(new Error('err'))
     .then((data) => res.status(200).send(data))
-    .catch(err => handleError(res, err));
+    .catch(err => handleError(err))
+    .catch(next);
 };
 
-const createData = (out, body, req, res) => {
+const createData = (out, body, req, res, next) => {
   out
     .create(body)
     .then((newData) => res.status(201).send(newData))
-    .catch(err => handleError(res, err));
+    .catch(err => handleError(err))
+    .catch(next);
 };
 
 module.exports = {
