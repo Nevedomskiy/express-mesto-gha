@@ -33,7 +33,13 @@ const getData = (out, req, res, next) => {
   out
     .find({})
     .orFail(new Error('err'))
-    .then((data) => res.status(200).send(data))
+    .then((data) => {
+      if (!data) {
+        throw new NotFoundError('Карточка или пользователь не найден');
+      } else {
+        res.status(200).send(data);
+      }
+    })
     .catch(err => handleError(err))
     .catch(next);
 };

@@ -1,7 +1,8 @@
 const Card = require('../models/card');
 const handleError = require('../errors/handle-errors');
 const { changeLike, getData, createData } = require('./helpers/helpers');
-const UnauthorizedError = require('../errors/unauthorized-error');
+const AssertionError = require('../errors/assertion-error');
+const NotFoundError = require('../errors/not-found-err');
 
 const getCards = (req, res, next) => {
   getData(Card, req, res, next);
@@ -18,14 +19,17 @@ const removeCardById = (req, res, next) => {
     .findById(req.params.id)
     .orFail(new Error('err'))
     .then((card) => {
-      if (req.user._id === card.owner.toString()) {
-        return Card.deleteOne(card);
+      if (card) {
+        if (req.user._id === card.owner) {
+          return Card.deleteOne(card);
+        } else {
+          throw new AssertionError('Попытка удалить чужую карточку');
+        }
       } else {
-        throw new UnauthorizedError('Попытка удалить чужую карточку');
+        throw new NotFoundError('Карточка или пользователь не найден');
       }
     })
     .then(() => res.status(200).send({ message: 'Карточка удалена' }))
-    .catch(err => handleError(err))
     .catch(next);
 };
 

@@ -79,7 +79,7 @@ const login = (req, res, next) => {
           sameSite: true,
         },
       );
-      res.status(201).send({ message: 'Вход успешно выполнен' });
+      res.status(200).send({ message: 'Вход успешно выполнен' });
     })
     .catch(next);
 };

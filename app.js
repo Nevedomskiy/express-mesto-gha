@@ -9,6 +9,7 @@ const { errors, celebrate, Joi } = require('celebrate');
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
 const auth = require('./middlewares/auth');
+const { validIsURL } = require('./validation/validation');
 
 const URL = 'mongodb://localhost:27017/mestodb';
 const app = express();
@@ -51,11 +52,11 @@ app.post(
   '/signup',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().email(),
+      email: Joi.string().required(),
       password: Joi.string().required().min(8),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string(),
+      avatar: Joi.string().custom(validIsURL),
     }),
   }),
   createUser,

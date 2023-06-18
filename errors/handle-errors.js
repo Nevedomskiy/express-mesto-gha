@@ -4,7 +4,7 @@ const ConflictingRequestError = require("./conflicting-request-error");
 const InternalServerError = require("./internal-server-error");
 const NotFoundError = require("./not-found-err");
 
-const handleError = (err) => {
+const handleError = (err, next) => {
   console.log(err);
   if (err.message === "err") {
     throw new NotFoundError('Карточка или пользователь не найден');
@@ -17,6 +17,7 @@ const handleError = (err) => {
   } else {
     throw new InternalServerError('На сервере произошла ошибка');
   }
+  next();
 };
 
 module.exports = handleError;
