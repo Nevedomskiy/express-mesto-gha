@@ -26,7 +26,7 @@ const removeCardById = (req, res, next) => {
       } else {
         Card.deleteOne(card)
           .orFail(new Error('err'))
-          .then(() => { res.status(200).send({ message: 'Карточка удалена' }); })
+          .then((remCard) => { if (remCard) { res.status(200).send({ message: 'Карточка удалена' }); } })
           .catch(next);
       }
     })

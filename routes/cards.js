@@ -37,7 +37,7 @@ router.delete(
   '/:id',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().hex().length(24),
     }),
   }),
   removeCardById,

@@ -72,6 +72,8 @@ app.use((req, res) => {
   });
 });
 app.use((err, req, res, next) => {
+  console.log(err.messageFormat);
+
   const { statusCode = 500, message } = err;
 
   res
