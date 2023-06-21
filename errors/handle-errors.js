@@ -5,7 +5,7 @@ const InternalServerError = require("./internal-server-error");
 const NotFoundError = require("./not-found-err");
 
 const handleError = (err, next) => {
-  console.log(err);
+  console.log(err.name);
   if (err.message === "err") {
     throw new NotFoundError('Карточка или пользователь не найден');
   } else if (err.name === 'CastError' || err.name === "ValidationError" || err.message.includes("Cast to ObjectId")) {
@@ -15,9 +15,8 @@ const handleError = (err, next) => {
   } else if (err.code === 11000) {
     throw new ConflictingRequestError('Данная почта уже зарегистрирована');
   } else {
-    throw new InternalServerError('На сервере произошла ошибка');
+    next(err);
   }
-  next();
 };
 
 module.exports = handleError;

@@ -3,6 +3,7 @@ const handleError = require('../errors/handle-errors');
 const { changeLike, getData, createData } = require('./helpers/helpers');
 const AssertionError = require('../errors/assertion-error');
 const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/conflicting-request-error');
 
 const getCards = (req, res, next) => {
   getData(Card, req, res, next);
@@ -17,19 +18,18 @@ const createCard = (req, res, next) => {
 const removeCardById = (req, res, next) => {
   Card
     .findById(req.params.id)
-    .orFail(new Error('err'))
     .then((card) => {
-      if (card) {
-        if (req.user._id === card.owner) {
-          return Card.deleteOne(card);
-        } else {
-          throw new AssertionError('Попытка удалить чужую карточку');
-        }
-      } else {
+      if (!card) {
         throw new NotFoundError('Карточка или пользователь не найден');
+      } else if (req.user._id !== card.owner.toString()) {
+        throw new AssertionError('Попытка удалить чужую карточку');
+      } else {
+        Card.deleteOne(card)
+          .orFail(new Error('err'))
+          .then(() => { res.status(200).send({ message: 'Карточка удалена' }); })
+          .catch(next);
       }
     })
-    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
     .catch(next);
 };
 
