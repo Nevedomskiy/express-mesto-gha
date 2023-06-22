@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const InternalServerError = require("../errors/internal-server-error");
-const NotFoundError = require('../errors/not-found-err');
+const ConflictingRequestError = require("../errors/conflicting-request-error");
 const { changeData, getData, getUserData } = require('./helpers/helpers');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -50,7 +49,7 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictError('Данная почта уже зарегистрирована');
+        throw new ConflictingRequestError('Данная почта уже зарегистрирована');
       }
     })
     .catch(next);

@@ -71,8 +71,6 @@ app.use((req, res) => {
   throw new NotFoundError('Маршрут указан некорректно');
 });
 app.use((err, req, res, next) => {
-  console.log(err);
-
   const { statusCode = 500, message } = err;
 
   res

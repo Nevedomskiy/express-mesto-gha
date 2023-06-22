@@ -2,7 +2,6 @@ const Card = require('../models/card');
 const { changeLike, getData, createData } = require('./helpers/helpers');
 const AssertionError = require('../errors/assertion-error');
 const NotFoundError = require('../errors/not-found-err');
-const BadRequestError = require('../errors/conflicting-request-error');
 
 const getCards = (req, res, next) => {
   getData(Card, req, res, next);
