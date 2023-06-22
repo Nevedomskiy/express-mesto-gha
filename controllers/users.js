@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const handleError = require('../errors/handle-errors');
-const { changeData, getData } = require('./helpers/helpers');
+const InternalServerError = require("../errors/internal-server-error");
+const NotFoundError = require('../errors/not-found-err');
+const { changeData, getData, getUserData } = require('./helpers/helpers');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -23,21 +24,11 @@ const changeUserAvatar = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User
-    .findById(req.params.id)
-    .orFail(new Error('err'))
-    .then((user) => res.status(200).send(user))
-    .catch(err => handleError(err))
-    .catch(next);
+  getUserData(User, req.params.id, res, next);
 };
 
 const getUserInfo = (req, res, next) => {
-  User
-    .findById(req.user._id)
-    .orFail(new Error('err'))
-    .then((user) => res.status(200).send(user))
-    .catch(err => handleError(err))
-    .catch(next);
+  getUserData(User, req.user._id, res, next);
 };
 
 const createUser = (req, res, next) => {
@@ -57,7 +48,11 @@ const createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => res.status(201).send(user))
-    .catch(err => handleError(err))
+    .catch((err) => {
+      if (err.code === 11000) {
+        throw new ConflictError('Данная почта уже зарегистрирована');
+      }
+    })
     .catch(next);
 };
 

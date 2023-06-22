@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Поле "password" должно быть заполнено'],
-    minlength: [8, 'Минимальная длина поля "password" - 8 символов'],
     select: false,
   },
 }, { versionKey: false });
@@ -39,10 +38,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .orFail(new UnauthorizedError('Неправильные почта или пароль'))
     .then((user) => {
-      if (!user) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
-      }
-
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {

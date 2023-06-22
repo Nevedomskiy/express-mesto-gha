@@ -10,6 +10,7 @@ const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
 const auth = require('./middlewares/auth');
 const { validIsURL } = require('./validation/validation');
+const NotFoundError = require('./errors/not-found-err');
 
 const URL = 'mongodb://localhost:27017/mestodb';
 const app = express();
@@ -43,7 +44,7 @@ app.post(
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string().min(8).required(),
+      password: Joi.string().required(),
     }),
   }),
   login,
@@ -53,7 +54,7 @@ app.post(
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
+      password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().custom(validIsURL),
@@ -67,9 +68,7 @@ app.use('/cards', cardRouter);
 app.use('/users', userRouter);
 app.use(errors());
 app.use((req, res) => {
-  res.status(404).send({
-    message: "Маршрут указан некорректно",
-  });
+  throw new NotFoundError('Маршрут указан некорректно');
 });
 app.use((err, req, res, next) => {
   console.log(err);

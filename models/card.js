@@ -24,7 +24,6 @@ const cardSchema = new mongoose.Schema({
   }],
   createdAt: {
     type: Date,
-    required: [true, 'Поле "createdAt" должно быть заполнено'],
     default: Date.now,
   },
 }, { versionKey: false });
