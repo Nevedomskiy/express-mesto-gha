@@ -24,8 +24,8 @@ const removeCardById = (req, res, next) => {
       } else if (req.user._id !== card.owner.toString()) {
         throw new AssertionError('Попытка удалить чужую карточку');
       } else {
-        Card.deleteOne(card)
-          .orFail(new Error('err'))
+        Card
+          .findByIdAndDelete(req.params.id)
           .then((remCard) => { if (remCard) { res.status(200).send({ message: 'Карточка удалена' }); } })
           .catch(next);
       }
