@@ -10,7 +10,8 @@ const getCards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  createData(Card, { name, link, owner }, req, res, next);
+  const errMessage = 'Карточка не найдена';
+  createData(Card, { name, link, owner }, req, res, next, errMessage);
 };
 
 const removeCardById = (req, res, next) => {
@@ -18,17 +19,16 @@ const removeCardById = (req, res, next) => {
     .findById(req.params.id)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
       } else if (req.user._id !== card.owner.toString()) {
-        throw new AssertionError('Попытка удалить чужую карточку');
+        next(new AssertionError('Попытка удалить чужую карточку'));
       } else {
         Card
           .findByIdAndDelete(req.params.id)
           .then(() => { res.status(200).send({ message: 'Карточка удалена' }); })
           .catch(next);
       }
-    })
-    .catch(next);
+    });
 };
 
 const addLikeCardById = (req, res, next) => {

@@ -13,7 +13,8 @@ const getUsers = (req, res, next) => {
 const changeUserInfo = (req, res, next) => {
   const me = req.user._id;
   const { name, about } = req.body;
-  changeData(User, { name, about }, me, req, res);
+  const errMessage = 'Пользователь не найден';
+  changeData(User, { name, about }, me, req, res, errMessage);
 };
 
 const changeUserAvatar = (req, res, next) => {
@@ -49,10 +50,9 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictingRequestError('Данная почта уже зарегистрирована');
+        next(new ConflictingRequestError('Данная почта уже зарегистрирована'));
       }
-    })
-    .catch(next);
+    });
 };
 
 const login = (req, res, next) => {
