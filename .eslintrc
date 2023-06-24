@@ -18,7 +18,6 @@
     "prefer-arrow-callback": "off",
     "func-names": "off",
     "no-unreachable": "off",
-    "no-useless-escape": "off",
-    "no-useless-return": "off"
+    "no-useless-escape": "off"
   }
 }

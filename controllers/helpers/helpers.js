@@ -1,6 +1,4 @@
-const BadRequestError = require("../../errors/bad-request-error");
 const NotFoundError = require('../../errors/not-found-err');
-const InternalServerError = require('../../errors/internal-server-error');
 
 const changeData = (out, body, id, req, res, next, errMessageNotFound) => {
   out

@@ -2,7 +2,6 @@ const Card = require('../models/card');
 const { changeLike, getData } = require('./helpers/helpers');
 const AssertionError = require('../errors/assertion-error');
 const NotFoundError = require('../errors/not-found-err');
-const BadRequestError = require('../errors/bad-request-error');
 
 const errMessageCardNotFound = 'Карточка не найдена';
 

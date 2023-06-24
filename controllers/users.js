@@ -21,7 +21,7 @@ const changeUserInfo = (req, res, next) => {
 const changeUserAvatar = (req, res, next) => {
   const me = req.user._id;
   const { avatar } = req.body;
-  changeData(User, { avatar }, me, req, res);
+  changeData(User, { avatar }, me, req, res, errMessageUserNotFound);
 };
 
 const getUserById = (req, res, next) => {
@@ -54,7 +54,7 @@ const createUser = (req, res, next) => {
         next(new ConflictingRequestError('Данная почта уже зарегистрирована'));
         return;
       }
-      next(err);
+      return next(err);
     });
 };
 
