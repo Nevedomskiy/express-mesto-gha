@@ -4,6 +4,8 @@ const User = require('../models/user');
 const ConflictingRequestError = require("../errors/conflicting-request-error");
 const { changeData, getData, getUserData } = require('./helpers/helpers');
 
+const errMessageUserNotFound = 'Пользователь не найден';
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => {
@@ -13,8 +15,7 @@ const getUsers = (req, res, next) => {
 const changeUserInfo = (req, res, next) => {
   const me = req.user._id;
   const { name, about } = req.body;
-  const errMessage = 'Пользователь не найден';
-  changeData(User, { name, about }, me, req, res, errMessage);
+  changeData(User, { name, about }, me, req, res, errMessageUserNotFound);
 };
 
 const changeUserAvatar = (req, res, next) => {
@@ -24,11 +25,11 @@ const changeUserAvatar = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  getUserData(User, req.params.id, res, next);
+  getUserData(User, req.params.id, res, next, errMessageUserNotFound);
 };
 
 const getUserInfo = (req, res, next) => {
-  getUserData(User, req.user._id, res, next);
+  getUserData(User, req.user._id, res, next, errMessageUserNotFound);
 };
 
 const createUser = (req, res, next) => {
@@ -51,7 +52,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictingRequestError('Данная почта уже зарегистрирована'));
+        return;
       }
+      next(err);
     });
 };
 

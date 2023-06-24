@@ -2,7 +2,7 @@ const BadRequestError = require("../../errors/bad-request-error");
 const NotFoundError = require('../../errors/not-found-err');
 const InternalServerError = require('../../errors/internal-server-error');
 
-const changeData = (out, body, id, req, res, next, errMessage) => {
+const changeData = (out, body, id, req, res, next, errMessageNotFound) => {
   out
     .findByIdAndUpdate(
       id,
@@ -12,32 +12,21 @@ const changeData = (out, body, id, req, res, next, errMessage) => {
         runValidators: true,
       },
     )
-    .orFail(new NotFoundError(errMessage))
+    .orFail(new NotFoundError(errMessageNotFound))
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      }
-    });
+    .catch(next);
 };
 
-const changeLike = (out, method, req, res, next) => {
+const changeLike = (out, method, req, res, next, errMessageNotFound) => {
   out
     .findByIdAndUpdate(
       req.params.id,
       method,
       { new: true },
     )
-    .orFail(new NotFoundError('Данные не найдены'))
+    .orFail(new NotFoundError(errMessageNotFound))
     .then((newCard) => res.status(200).send(newCard))
-    .catch((err) => {
-      if (err.message === 'Данные не найдены') {
-        next(new NotFoundError('Карточка не найдена'));
-      }
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      }
-    });
+    .catch(next);
 };
 
 const getData = (out, req, res, next) => {
@@ -49,40 +38,17 @@ const getData = (out, req, res, next) => {
     .catch(next);
 };
 
-const createData = (out, body, req, res, next) => {
-  out
-    .create(body)
-    .then((newData) => res.status(201).send(newData))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === "ValidationError") {
-        if (out === User) {
-          next(new BadRequestError('Переданы некорректные данные пользователя'));
-        } else {
-          next(new BadRequestError('Переданы некорректные данные карточки'));
-        }
-      }
-    });
-};
-
-const getUserData = (out, id, res, next) => {
+const getUserData = (out, id, res, next, errMessageNotFound) => {
   out
     .findById(id)
-    .orFail(new NotFoundError('Данные не найдены'))
+    .orFail(new NotFoundError(errMessageNotFound))
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.message === 'Данные не найдены') {
-        next(new NotFoundError('Пользователь не найден'));
-      }
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      }
-    });
+    .catch(next);
 };
 
 module.exports = {
   changeData,
   getData,
-  createData,
   changeLike,
   getUserData,
 };
